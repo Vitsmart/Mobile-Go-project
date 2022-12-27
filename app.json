@@ -4,10 +4,10 @@
     "slug": "MobileProject",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/space.jpg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/space.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
