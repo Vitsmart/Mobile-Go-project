@@ -36,7 +36,7 @@ navigation.setOptions({
       animation="fadeIn"
       easing="ease-in-out"
       source={mainImage} 
-      className="w-80 h-80 object-cover mt-20" 
+      className="w-80 h-80 object-cover mt-20 rounded-md" 
       />
     
     

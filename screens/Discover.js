@@ -1,21 +1,35 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, SafeAreaView } from 'react-native'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { attractions, avatar, hotel, restaurant } from '../assets';
+import { attractions, avatar, hotel, NotFound, restaurant } from '../assets';
 import MenuContainer from './MenuContainer';
 import { FontAwesome } from '@expo/vector-icons';
 import ItemContainer from './ItemContainer';
+import { getPlacesData } from '../components/api';
 
 
 const Discover = () => {
     const navigation = useNavigation();
 const [type, setType] = useState("hotels");
+const [isLoading, setIsLoading] = useState(false);
+const [mainData, setMainData] = useState([]);
+
+
 useLayoutEffect(() => {
 navigation.setOptions({
   headerShown:false,
 });
+}, []);
+
+useEffect(() =>{
+  setIsLoading(true)
+  getPlacesData().then((data) => {
+    setMainData(data);
+    setInterval(() => {
+      setIsLoading(false)
+    }, 2000);
+  })
 }, []);
 
   return (
@@ -33,17 +47,20 @@ className="w-full h-full rounded-md object-cover"/>
      </View>
      <View className="flex-row items-center bg-gray-100 mx-2 rounded-xl py-1 px-2 shadow-xl">
      <GooglePlacesAutocomplete
+     GooglePlacesDetailsQuery={{fields: "geometry"}}
       placeholder='Search'
+      fetchDetails={true}
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
-        console.log(data, details);
+        console.log(details?.geometry?.viewport);
       }}
       query={{
-        key: 'YOUR API KEY',
+        key: 'AIzaSyBJiFdK0nReK_23jSlPha3mQ3h1rXCIA1c',
         language: 'en',
       }}
     />
      </View>
+{isLoading ? <View className="flex-1 items-center justify-center"><ActivityIndicator size="large" color="#00ff00" /></View> : 
      <ScrollView>
         <View className="flex-row px-8 mt-8 items-center justify-between">
         <MenuContainer 
@@ -73,16 +90,45 @@ className="w-full h-full rounded-md object-cover"/>
                 <Text className="text-blue-900 text-[28px] font-bold">Top Tips</Text>
                 <TouchableOpacity className="flex-row items-center justify-center space-x-2">
                     <Text className="text-blue-600 text-[20px] font-bold">Explore</Text>
-                    <FontAwesome name="long-arrow-right" size={24} color="black" />
+                    <FontAwesome name="long-arrow-right" size={24} color="blue" />
                 </TouchableOpacity>
             </View>
             <View className="flex-row px-4 mt-8 justify-evenly items-center flex-wrap">
-                <ItemContainer key={101} imageSrc={"https://cdn.britannica.com/96/115096-050-5AFDAF5D/Bellagio-Hotel-Casino-Las-Vegas.jpg"} title="Garden hotel" location="Nigeria"/>
-                <ItemContainer key={102} imageSrc={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL11fk_sy-xXhiy2Z-a7CoUSew7TCV6PwUdw&usqp=CAU"} title="Spring hotel" location="Abuja"/>
+              {mainData?.length > 0 ? 
+              (<>
+             {mainData?.map((data, i) => (
+              <ItemContainer 
+              key={i}
+              imageSrc={
+                data?.photo?.images?.medium?.url ? 
+                data?.photo?.images?.medium?.url :
+                "https://cdn.britannica.com/96/115096-050-5AFDAF5D/Bellagio-Hotel-Casino-Las-Vegas.jpg"
 
+              }
+              title={data?.name} 
+              location={data?.location_string}
+              data={data}
+              />
+             ))}
+            
+                </>) : (
+                  <>
+                  <View className="w-full h-[300px] items-center justify-center space-y-4">
+                    <Image 
+                    source={NotFound}
+                    className="w-32 h-32 object-cover"/>
+                    <Text className="text-2xl font-semibold text-gray-900">
+                      Ooops... No Data Found!!
+                      
+                    </Text>
+
+                  </View>
+                  </>
+                )}
             </View>
         </View>
      </ScrollView>
+}
     </SafeAreaView>
   )
 }
