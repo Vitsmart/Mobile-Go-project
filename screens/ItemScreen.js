@@ -100,10 +100,48 @@ className="w-10 h-10 items-center justify-center bg-white rounded-md">
   )}
 
 {data?.description && ( 
+ 
   <Text className="text-[16px] mt-4 tracking-wide font-semibold text-blue-50">{data?.description}</Text>
   )}
 
+{data?.cuisine && ( 
+   <View className="flex-row space-y-2 items-center justify-start flex-wrap mt-4">
+    {data?.cuisine.map((n) => (
+  <TouchableOpacity
+  key={n.key}
+    className="px-2 py-1 rounded-md bg-gray-50" >
+  <Text>{n.name}</Text>
+  </TouchableOpacity>
+  ))}
+  </View>
+  )}
 
+   <View className="flex-row space-y-2 rounded-2xl px-4 py-2 bg-gray-100 mt-4">
+{data?.phone && ( 
+<View className="flex-row items-center space-x-6">
+<FontAwesome name="phone" size={24} color="black" />
+<Text className="text-lg">{data?.phone}</Text>
+</View>
+)}
+{data?.email && ( 
+<View className="flex-row items-center space-x-6">
+<FontAwesome name="envelope" size={24} color="black" />
+<Text className="text-lg">{data?.email}</Text>
+</View>
+)}
+ {data?.address && ( 
+<View className="flex-row items-center space-x-6">
+<FontAwesome name="map-pin" size={24} color="black" />
+<Text className="text-lg">{data?.address}</Text>
+</View>
+)}   
+  <View className="px-4 py-4 rounded-lg mt-4 mb-12 items-center justify-center bg-blue-700">
+    <Text className="text-3xl font-semibold uppercase bg-gray-50 tracking-wider ">
+      Book Now
+    </Text>
+  </View>
+  </View>
+  
 </View>
       </ScrollView>
 
